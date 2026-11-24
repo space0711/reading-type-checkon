@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>책크온 독서 유형 검사</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 밤의 대도서관에서 치르는 다정하고 신비로운 배정 의식
+   IDEA: 책크온 기숙사 배정식의 '운명의 책' — 답할수록 책이 당신을 읽는다
+   PICTURE: 펼쳐진 책에서 네 기숙사 색 책갈피 리본이 내려오고, 고른 답만큼 자라남
+   COLOUR and TYPE: 밤 #0d0915, 금 #e8c872, 종이 #f6ecd6, 네 기숙사 색 / Gowun Batang + Gowun Dodum
+   LAYOUT: 한 열짜리 유리 카드, 위에 책과 리본, 아래에 질문 → 결과 → 책크온 입장 */
+:root{color-scheme:dark;--gold:#e8c872;--paper:#f6ecd6;--ink:#3a2a1e;--glass:rgba(24,16,36,.84);--line:rgba(232,200,114,.35)}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;min-height:100%}
+body{background:#0d0915;color:#f3eadb;font:16px/1.6 "Gowun Dodum",system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent;
+ background-image:radial-gradient(1px 1px at 12% 18%,#fff8 50%,transparent 51%),radial-gradient(1px 1px at 78% 12%,#fff6 50%,transparent 51%),radial-gradient(1.5px 1.5px at 64% 40%,#ffe9a888 50%,transparent 51%),radial-gradient(1px 1px at 30% 70%,#fff5 50%,transparent 51%),radial-gradient(1px 1px at 88% 78%,#fff6 50%,transparent 51%),radial-gradient(ellipse at 50% -10%,#3a2550 0%,#0d0915 60%);background-attachment:fixed}
+.wrap{max-width:580px;margin:0 auto;padding:28px 16px 40px}
+.card{background:var(--glass);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:22px;padding:26px 22px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+h1,h2,h3{font-family:"Gowun Batang",serif;margin:0;text-wrap:balance}
+.title{font-size:clamp(30px,7vw,40px);line-height:1.1;text-align:center;color:var(--gold);text-shadow:0 0 24px rgba(232,200,114,.4)}
+.sub{text-align:center;color:#bfb2d6;font-size:13px;margin:8px 0 0}
+.stage{position:relative;height:250px;margin:10px auto 6px;max-width:340px}
+.stage svg{position:absolute;inset:0 0 auto 0;width:100%;height:150px}
+.ribbons{position:absolute;top:118px;left:50%;transform:translateX(-50%);display:flex;gap:12px}
+.rb{width:22px;height:34px;border-radius:2px 2px 0 0;clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - 10px),0 100%);transition:height .6s cubic-bezier(.3,1.4,.5,1),filter .4s;box-shadow:inset -5px 0 0 rgba(0,0,0,.18)}
+.rb.win{filter:drop-shadow(0 0 10px var(--g)) brightness(1.15)}
+.glow{animation:pulse 3.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.55}}
+.prog{display:flex;align-items:center;gap:10px;font-size:13px;color:#cfc3e3;margin-bottom:12px}
+.bar{flex:1;height:6px;background:rgba(255,255,255,.1);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#c9a24a,#f1d58b);transition:width .4s}
+.q{font-family:"Gowun Batang",serif;font-size:21px;line-height:1.45;margin:0 0 16px;text-wrap:balance}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;width:100%;min-height:52px;background:rgba(255,255,255,.06);color:#f3eadb;border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:12px 14px;font:inherit;font-size:16px;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.opt:hover,.opt:focus-visible{background:rgba(232,200,114,.16);border-color:var(--gold);outline:none;transform:translateX(3px)}
+.opt b{flex:none;width:26px;height:26px;border-radius:8px;background:rgba(232,200,114,.2);color:var(--gold);display:grid;place-items:center;font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;background:linear-gradient(#f1d58b,#c9a24a);color:#2b1c0e;border:0;border-radius:12px;padding:12px 20px;font:700 16px "Gowun Dodum",sans-serif;text-decoration:none;cursor:pointer;box-shadow:0 2px 0 #8a6a25,0 6px 16px rgba(0,0,0,.3)}
+.btn:hover{filter:brightness(1.06)}.btn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.btn.ghost{background:rgba(255,255,255,.08);color:#f3eadb;box-shadow:inset 0 0 0 1px var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.back{background:none;border:0;color:#bfb2d6;font:inherit;font-size:14px;cursor:pointer;padding:10px 4px;margin-top:8px;min-height:44px}
+.back:disabled{opacity:.3;cursor:default}
+.intro p{color:#d8cde8;text-align:center;margin:6px 0}
+.houses{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0 4px}
+.hs{border-radius:12px;padding:10px 4px;text-align:center;font-size:13px;color:#fff}
+.hs span{display:block;font-size:22px}
+.kick{text-align:center;color:#cfc3e3;font-size:14px;margin:4px 0 2px}
+.rname{text-align:center;font-size:clamp(34px,9vw,48px);line-height:1.05;color:var(--c2)}
+.tname{text-align:center;font-family:"Gowun Batang",serif;font-size:19px;color:var(--gold);margin:6px 0 0}
+.motto{text-align:center;font-size:13px;color:#cfc3e3;margin:2px 0 14px}
+.line{background:var(--paper);color:var(--ink);border-radius:14px;padding:16px 18px;font-family:"Gowun Batang",serif;line-height:1.8;box-shadow:0 0 0 3px var(--dk)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px 0}
+.chips span{background:var(--dk);color:var(--c2);border:1px solid var(--c1);border-radius:99px;padding:5px 12px;font-size:13px}
+.sec{margin-top:20px}
+.sec h3{font-size:17px;color:var(--gold);margin-bottom:10px}
+.sc{display:grid;grid-template-columns:72px minmax(0,1fr) 42px;gap:10px;align-items:center;font-size:14px;margin-bottom:7px}
+.sc .tr{height:10px;background:rgba(255,255,255,.08);border-radius:9px;overflow:hidden}
+.sc .tr i{display:block;height:100%;border-radius:9px;transition:width .8s}
+.sc em{font-style:normal;text-align:right;color:#cfc3e3;white-space:nowrap}
+.books{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.bk{background:#fffaf0;color:var(--ink);border-radius:10px;padding:8px;font-size:13px;line-height:1.4}
+.cv{height:92px;border-radius:3px 7px 7px 3px;display:flex;align-items:flex-end;padding:8px 8px 8px 14px;color:#fff;font:700 13px/1.3 "Gowun Batang",serif;text-shadow:0 1px 4px rgba(0,0,0,.6);box-shadow:inset 5px 0 0 rgba(0,0,0,.25);position:relative;margin-bottom:6px}
+.cv i{position:absolute;top:6px;right:8px;font-style:normal;font-size:18px}
+.bk small{color:#7a6650}
+.room{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.room .ic{flex:none;font-size:28px}
+.room b{display:block;font-family:"Gowun Batang",serif;font-size:16px}
+.room small{color:#cfc3e3;font-size:13px}
+.why{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.why li{padding-left:22px;position:relative;color:#e6dcf5}
+.why li::before{content:"✦";position:absolute;left:0;color:var(--gold)}
+.cta{margin-top:22px;text-align:center;background:linear-gradient(160deg,var(--c1),var(--dk));border-radius:18px;padding:20px 16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.15)}
+.cta p{margin:0 0 12px;color:#fff;font-family:"Gowun Batang",serif;font-size:18px;line-height:1.5;text-wrap:balance}
+.cta .btn{width:100%;font-size:17px}
+.cta small{display:block;margin-top:10px;color:rgba(255,255,255,.8);font-size:13px}
+.foot{text-align:center;color:#8c80a4;font-size:13px;margin-top:20px}
+.foot a{color:#bfb2d6}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2b1c0e;color:var(--gold);border:1px solid var(--gold);border-radius:99px;padding:9px 18px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.sheet{position:fixed;inset:0;background:rgba(8,5,14,.78);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.sheet[hidden]{display:none}
+.sheet .in{width:min(420px,100%);max-height:calc(100vh - 32px);overflow:auto;background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:16px;text-align:center}
+.sheet img{width:100%;border-radius:12px;display:block;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.sheet p{font-size:14px;color:#d8cde8;margin:12px 0 0}
+.last{display:block;margin:12px auto 0;background:none;border:1px dashed var(--line);color:#d8cde8;border-radius:12px;padding:10px 14px;font:inherit;font-size:14px;cursor:pointer;min-height:44px}
+.fade{animation:fin .45s ease both}
+@keyframes fin{from{opacity:0;transform:translateY(8px)}}
+@media(max-width:420px){.card{padding:22px 16px}.books{grid-template-columns:1fr}.bk{display:grid;grid-template-columns:60px 1fr;gap:10px;align-items:center}.cv{height:80px;margin:0;font-size:0}.stage{height:230px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="card">
+    <div class="stage" aria-hidden="true">
+      <svg viewBox="0 0 320 150">
+        <defs>
+          <radialGradient id="halo" cx="50%" cy="55%" r="50%"><stop offset="0" stop-color="#e8c872" stop-opacity=".55"/><stop offset="1" stop-color="#e8c872" stop-opacity="0"/></radialGradient>
+          <linearGradient id="pgL" x1="0" x2="1"><stop offset="0" stop-color="#e9dcbc"/><stop offset="1" stop-color="#fbf3df"/></linearGradient>
+          <linearGradient id="pgR" x1="1" x2="0"><stop offset="0" stop-color="#e9dcbc"/><stop offset="1" stop-color="#fbf3df"/></linearGradient>
+        </defs>
+        <ellipse class="glow" cx="160" cy="80" rx="150" ry="70" fill="url(#halo)"/>
+        <path d="M160 128 C118 108 74 104 28 112 L28 50 C74 42 118 46 160 66 C202 46 246 42 292 50 L292 112 C246 104 202 108 160 128Z" fill="#5a3a22"/>
+        <path d="M160 120 C120 100 80 98 38 104 L38 44 C80 38 120 42 160 62Z" fill="url(#pgL)"/>
+        <path d="M160 120 C200 100 240 98 282 104 L282 44 C240 38 200 42 160 62Z" fill="url(#pgR)"/>
+        <g stroke="#c9b48a" stroke-width="1.4" fill="none" opacity=".8">
+          <path d="M58 58 C90 54 120 58 146 70"/><path d="M58 70 C90 66 120 70 146 82"/><path d="M58 82 C90 78 120 82 146 94"/>
+          <path d="M174 70 C200 58 230 54 262 58"/><path d="M174 82 C200 70 230 66 262 70"/><path d="M174 94 C200 82 230 78 262 82"/>
+        </g>
+        <path d="M160 62 L160 122" stroke="#8a6a3a" stroke-width="2"/>
+        <g fill="#e8c872"><circle cx="160" cy="18" r="3"/><circle cx="112" cy="26" r="2"/><circle cx="208" cy="26" r="2"/></g>
+      </svg>
+      <div class="ribbons" id="ribbons"></div>
+    </div>
+    <div id="app"></div>
+  </div>
+  <p class="foot">책크온 · CHECK-ON GRAND LIBRARY · <a href="https://space0711.github.io/check-on/">도서관 바로가기</a><br>인스타그램 @ajou_check_on · v1125b</p>
+</main>
+<div class="toast" id="toast"></div>
+<div class="sheet" id="sheet" hidden><div class="in">
+  <img id="shot" alt="나의 책크온 독서 유형 결과 카드">
+  <p>저장이 안 되면 이미지를 <b>길게 눌러</b> 저장하세요 (PC는 우클릭 → 이미지 저장)</p>
+  <div class="row"><a class="btn" id="dl" download="책크온-독서유형.png">이미지 저장</a><button class="btn ghost" id="shClose">닫기</button></div>
+</div></div>
+
+<script>
+{
+const LIB='https://space0711.github.io/check-on/';
+const H={
+ ember:{name:'화온관',emoji:'🔥',c1:'#b8322a',c2:'#f2c14e',dark:'#6e1712',motto:'용기와 열정',type:'불꽃 질주형 독서가',
+  line:'첫 장을 펼치는 순간 이미 출발한 사람. 마음에 드는 이야기를 만나면 밤을 새워서라도 끝까지 달려가요. 책은 당신에게 앉아서 떠나는 모험이에요.',
+  traits:['한 번 잡으면 완독','첫 문장에 꽂히는 타입','모험·성장 이야기'],
+  room:['☁️','하늘을 날며 읽는 방','구름 사이를 날아다니며 페이지를 넘기는 방'],
+  books:[['구름 위 우체국','판타지','#5d8fd6','#bfe0ff','✉️'],['잃어버린 지도의 섬','모험','#1f6f78','#e0c48a','🧭'],['등대지기 소녀와 열 개의 별','모험 · 10장','#16324a','#f0c060','🌟']],
+  why:['달리는 독서가에게 필요한 건 다음 모험 — 서가를 직접 걸어 다니며 한눈에 끌리는 책을 고를 수 있어요','다 읽은 기세 그대로 서평을 남기고 🏆 서평 랭킹에 도전해 보세요','책을 읽을수록 모이는 코인으로 별무늬 마법사 모자도 써 볼 수 있어요']},
+ tide:{name:'파랑관',emoji:'🌊',c1:'#2d5fa8',c2:'#c9d6e8',dark:'#16315c',motto:'지혜와 탐구',type:'심해 탐구형 독서가',
+  line:'한 문장에 오래 머무는 사람. "왜?"라는 질문을 끝까지 따라가고, 밑줄 그은 문장이 당신만의 지도가 돼요. 책은 당신에게 깊이 잠수하는 바다예요.',
+  traits:['밑줄·메모 장인','복선과 반전 수집가','추리·지식 이야기'],
+  room:['🌫️','고요의 방 · 백색소음','잡음 없이 한 문장에 집중하는 방'],
+  books:[['열세 번째 열쇠','추리','#2a2a2e','#7a6a4a','🗝️'],['도서관에서 사라진 문장','추리','#4a2c2a','#c9a24a','🔍'],['시간 대출 은행','SF','#3a2a10','#e0b040','⏳']],
+  why:['🔎 도서 검색으로 궁금한 장르와 키워드를 바로 찾아낼 수 있어요','✍️ 서평 쓰기로 읽은 생각을 차곡차곡 정리해 내 서재에 쌓아 두세요','백색소음을 켜고 앉으면, 방해 없는 나만의 열람실이 열려요']},
+ fern:{name:'초엽관',emoji:'🌿',c1:'#2f7d50',c2:'#e3c27a',dark:'#164029',motto:'다정함과 끈기',type:'온기 나눔형 독서가',
+  line:'하루 몇 장씩, 오래오래 함께 읽는 사람. 좋은 문장을 만나면 누군가에게 꼭 들려주고 싶어져요. 책은 당신에게 함께 앉는 따뜻한 자리예요.',
+  traits:['꾸준히 조금씩','좋은 문장은 공유','위로·일상 이야기'],
+  room:['🌳','숲속 마을의 방','동물 친구들이 사는 아늑한 숲 독서방'],
+  books:[['새벽 네 시의 빵집','에세이','#c8874a','#f3d9a8','🥐'],['하루 한 장, 다정의 연습','에세이 · 10장','#e8a080','#fff0d8','☕'],['숲의 말을 배우다','동화','#4f7a3a','#d8c07a','🍂']],
+  why:['같은 시간에 접속한 다른 독서가들과 도서관에서 직접 마주칠 수 있어요','다른 사람의 서평에 ❤️ 하트를 남기며 마음을 나눠 보세요','사서에게 오늘의 기분을 말하면 꼭 맞는 책을 추천해 줘요']},
+ moon:{name:'월야관',emoji:'🌙',c1:'#6a44a8',c2:'#e9e2ff',dark:'#341f5c',motto:'상상력과 신비',type:'달빛 몽상형 독서가',
+  line:'모두가 잠든 밤에 이야기를 길어 올리는 사람. 책을 덮은 뒤에도 뒷이야기를 혼자 이어 가요. 책은 당신에게 별빛으로 들어가는 문이에요.',
+  traits:['새벽 독서파','분위기와 문장 수집','SF·시·판타지'],
+  room:['🌧️','고요의 방 · 빗소리와 모닥불','창밖엔 비, 곁에는 불빛이 있는 밤의 방'],
+  books:[['별을 수선하는 사람','SF','#1b1f4a','#6a5acd','⭐'],['마지막 관측자','SF · 10장','#0b1026','#3a4a9a','🔭'],['밤에 쓰는 편지','시집','#1a1a3a','#8a7ac8','🌙']],
+  why:['빗소리·모닥불을 켜고, 방마다 어울리는 🎵 배경음악까지 골라 들을 수 있어요','3D로 펼쳐진 밤의 대도서관 자체가 당신의 상상 속 서재예요','잠 못 드는 밤, 시집 한 편씩 꺼내 읽기 좋은 책들이 기다려요']}
+};
+const KEYS=['ember','tide','fern','moon'];
+const Q=[
+ {q:'서점에 들어서면, 발길이 가장 먼저 향하는 곳은?',a:[['여행·모험 소설이 있는 코너','ember'],['추리·과학·인문 코너','tide'],['에세이·요리·생활 코너','fern'],['판타지·SF·시집 코너','moon']]},
+ {q:'읽을 책을 고를 때, 결정적인 한 방은?',a:[['첫 페이지에서 바로 빨려 들어가는가','ember'],['평점과 리뷰, 작가 이력을 꼼꼼히','tide'],['믿는 친구의 추천, 같이 읽을 수 있는지','fern'],['표지와 제목이 풍기는 분위기','moon']]},
+ {q:'가장 책이 잘 읽히는 순간은?',a:[['지하철, 카페… 어디서든 틈날 때','ember'],['조용한 책상, 정해 둔 시간','tide'],['소파에서 따뜻한 차 한 잔과 함께','fern'],['모두 잠든 새벽, 침대 위 스탠드 불빛 아래','moon']]},
+ {q:'책을 읽는 나의 방식은?',a:[['재밌으면 한 번에 끝까지 몰아서','ember'],['밑줄 긋고 메모하며 천천히','tide'],['하루 몇 장씩 꾸준히','fern'],['기분 따라 여러 권을 번갈아','moon']]},
+ {q:'이야기가 열린 결말로 끝났다. 나는?',a:[['바로 다음 권이나 비슷한 책을 찾는다','ember'],['해석과 숨은 복선을 검색해 본다','tide'],['누군가와 이 결말에 대해 이야기하고 싶다','fern'],['내 마음대로 뒷이야기를 상상한다','moon']]},
+ {q:'아무 계획 없는 주말이 생겼다면?',a:[['일단 나가서 즉흥적으로 어딘가로','ember'],['궁금했던 걸 끝까지 파고드는 날','tide'],['좋아하는 사람과 맛있는 걸 먹는 날','fern'],['혼자 음악 듣고 공상하는 날','moon']]},
+ {q:'친구들이 말하는 나는…',a:[['"일단 해 보는 사람"','ember'],['"질문이 많은 사람"','tide'],['"곁에 있으면 편한 사람"','fern'],['"엉뚱하고 감성적인 사람"','moon']]}
+];
+const app=document.getElementById('app'),rbBox=document.getElementById('ribbons');
+let i=0,ans=[],order=[];
+const shuf=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+rbBox.innerHTML=KEYS.map(k=>`<div class="rb" id="rb-${k}" style="background:linear-gradient(${H[k].c1},${H[k].dark});--g:${H[k].c1}"></div>`).join('');
+function counts(){const c={ember:0,tide:0,fern:0,moon:0};ans.forEach(k=>c[k]++);return c}
+function ribbons(win){const c=counts();KEYS.forEach(k=>{const el=document.getElementById('rb-'+k);el.style.height=(34+c[k]*16)+'px';el.classList.toggle('win',k===win)})}
+
+function intro(){
+ ans=[];i=0;ribbons();
+ app.innerHTML=`<div class="intro fade">
+  <h1 class="title">운명의 책이<br>당신을 읽습니다</h1>
+  <p class="sub">책크온 독서 유형 검사 · 7문항 · 약 1분</p>
+  <div class="houses">${KEYS.map(k=>`<div class="hs" style="background:linear-gradient(${H[k].c1},${H[k].dark})"><span>${H[k].emoji}</span>${H[k].name}</div>`).join('')}</div>
+  <p>책을 고르는 법, 읽는 시간, 그리고 당신의 성향.<br>답할 때마다 책갈피가 자라나 네 기숙사 중 하나를 가리켜요.</p>
+  <div class="row"><button class="btn" id="go">책 펼치기 →</button></div>
+  ${saved?`<button class="last" id="last">${H[saved.w].emoji} 지난 결과 다시 보기 · ${H[saved.w].name} (${saved.d})</button>`:''}</div>`;
+ document.getElementById('go').onclick=()=>{order=Q.map(q=>shuf(q.a));ask()};
+ const L=document.getElementById('last');if(L)L.onclick=()=>{ans=saved.a.slice();result(true)};
+}
+function ask(){
+ const q=Q[i];
+ app.innerHTML=`<div class="fade">
+  <div class="prog"><span>${i+1} / ${Q.length}</span><div class="bar"><i style="width:${i/Q.length*100}%"></i></div></div>
+  <h2 class="q">${q.q}</h2>
+  <div class="opts">${order[i].map((o,n)=>`<button class="opt" data-h="${o[1]}"><b>${n+1}</b><span>${o[0]}</span></button>`).join('')}</div>
+  <button class="back" id="back" ${i?'':'disabled'}>← 이전 질문</button></div>`;
+ app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(b.dataset.h));
+ document.getElementById('back').onclick=()=>{if(!i)return;i--;ans.pop();ribbons();ask()};
+}
+function pick(h){ans[i]=h;ribbons();i++;if(i<Q.length)setTimeout(ask,180);else setTimeout(result,250)}
+function winner(){const c=counts(),max=Math.max(...KEYS.map(k=>c[k]));for(let k=ans.length-1;k>=0;k--)if(c[ans[k]]===max)return ans[k]}
+let saved=null;try{const s=JSON.parse(localStorage.getItem('checkon-reading-type')||'null');if(s&&H[s.w]&&Array.isArray(s.a))saved=s}catch(e){}
+function result(fromSaved){
+ const w=winner(),h=H[w],c=counts();ribbons(w);
+ if(!fromSaved){const d=new Date();saved={w,a:ans.slice(),d:`${d.getMonth()+1}월 ${d.getDate()}일`};try{localStorage.setItem('checkon-reading-type',JSON.stringify(saved))}catch(e){}}
+ app.innerHTML=`<div class="fade" style="--c1:${h.c1};--c2:${h.c2};--dk:${h.dark}">
+  <p class="kick">책이 당신을 다 읽었어요. 당신은…</p>
+  <h2 class="rname">${h.emoji} ${h.name} 유형</h2>
+  <p class="tname">${h.type}</p>
+  <p class="motto">${h.motto}의 기숙사</p>
+  <div class="line">${h.line}</div>
+  <div class="chips">${h.traits.map(t=>`<span>${t}</span>`).join('')}</div>
+  <div class="sec"><h3>나의 기숙사 성향</h3>
+   ${KEYS.map(k=>`<div class="sc"><span>${H[k].emoji} ${H[k].name}</span><div class="tr"><i style="width:0;background:${H[k].c1}" data-w="${Math.round(c[k]/Q.length*100)}"></i></div><em>${Math.round(c[k]/Q.length*100)}%</em></div>`).join('')}</div>
+  <div class="sec"><h3>당신에게 맞는 독서방</h3>
+   <div class="room"><span class="ic">${h.room[0]}</span><div><b>${h.room[1]}</b><small>${h.room[2]}</small></div></div></div>
+  <div class="sec"><h3>책크온 서가에서 당신을 기다리는 책</h3>
+   <div class="books">${h.books.map(b=>`<div class="bk"><div class="cv" style="background:linear-gradient(160deg,${b[2]},${b[3]})"><i>${b[4]}</i>${b[0]}</div><div><b>${b[0]}</b><br><small>${b[1]}</small></div></div>`).join('')}</div></div>
+  <div class="sec"><h3>${h.name} 독서가가 책크온에서 읽어야 하는 이유</h3>
+   <ul class="why">${h.why.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+  <div class="cta"><p>${h.name}의 깃발이 당신을 기다리고 있어요.<br>이제 진짜 도서관에 들어가 볼까요?</p>
+   <a class="btn" href="${LIB}" target="_blank" rel="noopener">${h.emoji} 책크온 입장하기 →</a>
+   <small>캐릭터를 만들고 기숙사 배정식에서 <b>${h.name}</b>을 골라 주세요</small></div>
+  <div class="row"><button class="btn" id="save">📸 결과 이미지 저장</button><button class="btn ghost" id="copy">결과 복사하기</button><button class="btn ghost" id="again">다시 하기</button></div></div>`;
+ document.getElementById('save').onclick=()=>saveImg(w,c);
+ requestAnimationFrame(()=>setTimeout(()=>app.querySelectorAll('.tr i').forEach(e=>e.style.width=e.dataset.w+'%'),60));
+ document.getElementById('again').onclick=intro;
+ document.getElementById('copy').onclick=async()=>{
+  const t=`📚 나의 독서 유형은 ${h.emoji} ${h.name} — ${h.type}!\n${h.traits.join(' · ')}\n너는 어느 기숙사일까? 책크온에서 확인해 봐 👉 ${LIB}\n#책크온 @ajou_check_on`;
+  try{await navigator.clipboard.writeText(t);toast('결과를 복사했어요. 인스타에 붙여 넣어 보세요!')}catch(e){toast('복사가 막혀 있어요. 화면을 캡처해 공유해 주세요')}
+ };
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function wrapText(g,t,x,y,maxW,lh){let line='',yy=y;for(const ch of t){const test=line+ch;if(g.measureText(test).width>maxW&&line){g.fillText(line,x,yy);line=ch.trim()?ch:'';yy+=lh}else line=test}if(line)g.fillText(line,x,yy);return yy}
+async function saveImg(w,c){
+ const h=H[w],W=1080,HH=1350,cv=document.createElement('canvas');cv.width=W;cv.height=HH;const g=cv.getContext('2d');
+ try{await Promise.all([document.fonts.load('700 60px "Gowun Batang"'),document.fonts.load('40px "Gowun Dodum"')])}catch(e){}
+ const B='"Gowun Batang",serif',D='"Gowun Dodum",sans-serif';
+ let gr=g.createLinearGradient(0,0,0,HH);gr.addColorStop(0,'#2a1a3c');gr.addColorStop(.55,'#0d0915');gr.addColorStop(1,h.dark);g.fillStyle=gr;g.fillRect(0,0,W,HH);
+ for(let k=0;k<70;k++){g.fillStyle=`rgba(255,248,220,${.2+Math.random()*.5})`;g.beginPath();g.arc(Math.random()*W,Math.random()*HH*.6,Math.random()*2+.5,0,7);g.fill()}
+ g.strokeStyle='rgba(232,200,114,.6)';g.lineWidth=3;g.strokeRect(40,40,W-80,HH-80);g.strokeStyle='rgba(232,200,114,.25)';g.lineWidth=1.5;g.strokeRect(56,56,W-112,HH-112);
+ g.textAlign='center';g.fillStyle='#e8c872';g.font=`700 44px ${B}`;g.fillText('책크온',W/2,140);
+ g.fillStyle='#bfb2d6';g.font=`26px ${D}`;g.fillText('나의 독서 유형은',W/2,190);
+ const rg=g.createRadialGradient(W/2,330,10,W/2,330,170);rg.addColorStop(0,h.c1);rg.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=rg;g.beginPath();g.arc(W/2,330,170,0,7);g.fill();
+ g.font=`130px ${D}`;g.fillText(h.emoji,W/2,380);
+ g.fillStyle=h.c2;g.font=`700 104px ${B}`;g.fillText(h.name,W/2,540);
+ g.fillStyle='#e8c872';g.font=`700 46px ${B}`;g.fillText(h.type,W/2,612);
+ g.fillStyle='#cfc3e3';g.font=`28px ${D}`;g.fillText(`${h.motto}의 기숙사`,W/2,660);
+ g.font=`28px ${D}`;let cx=0;const tw=h.traits.map(t=>g.measureText(t).width+48),tot=tw.reduce((a,b)=>a+b,0)+16*(tw.length-1);cx=(W-tot)/2;
+ h.traits.forEach((t,n)=>{g.fillStyle=h.dark;g.strokeStyle=h.c1;g.lineWidth=2;g.beginPath();g.roundRect?g.roundRect(cx,690,tw[n],56,28):g.rect(cx,690,tw[n],56);g.fill();g.stroke();g.fillStyle=h.c2;g.fillText(t,cx+tw[n]/2,728);cx+=tw[n]+16});
+ g.fillStyle='#f6ecd6';g.beginPath();g.roundRect?g.roundRect(110,790,W-220,190,24):g.rect(110,790,W-220,190);g.fill();
+ g.fillStyle='#3a2a1e';g.font=`31px ${B}`;g.textAlign='left';wrapText(g,h.line,150,850,W-300,48);
+ g.font=`28px ${D}`;KEYS.forEach((k,n)=>{const y=1040+n*54,p=Math.round(c[k]/Q.length*100);g.fillStyle='#f3eadb';g.textAlign='left';g.fillText(`${H[k].emoji} ${H[k].name}`,140,y);g.fillStyle='rgba(255,255,255,.12)';g.fillRect(340,y-22,520,18);g.fillStyle=H[k].c1;g.fillRect(340,y-22,520*p/100,18);g.fillStyle='#cfc3e3';g.textAlign='right';g.fillText(p+'%',W-140,y)});
+ g.textAlign='center';g.fillStyle='#e8c872';g.font=`26px ${D}`;g.fillText('space0711.github.io/check-on  ·  @ajou_check_on',W/2,1280);
+ const url=cv.toDataURL('image/png');document.getElementById('shot').src=url;document.getElementById('dl').href=url;document.getElementById('dl').download=`책크온-${h.name}.png`;document.getElementById('sheet').hidden=false;
+}
+document.getElementById('shClose').onclick=()=>document.getElementById('sheet').hidden=true;
+document.getElementById('sheet').onclick=e=>{if(e.target.id==='sheet')e.target.hidden=true};
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2600)}
+document.addEventListener('keydown',e=>{const n=+e.key;if(n>=1&&n<=4){const b=app.querySelectorAll('.opt')[n-1];if(b)b.click()}});
+intro();
+}
+</script>
+</body>
+</html>
